@@ -22,7 +22,7 @@ findText entry = go <$> (readFile $ D.getPath entry)
     where go bytes = fmap (T.intercalate "\n" . tail)
                    $ find (checkId $ D.getId entry) 
                    $ map (T.splitOn "\n") 
-                   $ T.splitOn "---" bytes
+                   $ T.splitOn "\n---\n" bytes
           checkId id lines = (head lines) == T.intercalate "" ["ID:", (T.pack $ show id)]
 
 splitCard :: T.Text -> (T.Text, T.Text)
