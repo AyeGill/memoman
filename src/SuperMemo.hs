@@ -10,6 +10,7 @@ module SuperMemo
     , LearningData (LD)
     , module T
     , nextReview
+    , mkLearningData
     ) where
 
 import qualified Data.Time.Clock as T (UTCTime
@@ -30,6 +31,14 @@ data LearningData = LD {steps :: Int, -- Times reviewed since last reset
                         lastReviewed :: T.UTCTime,
                         reviewDelay :: T.NominalDiffTime} deriving (Show, Eq, Generic)
 instance Serialize LearningData
+
+mkLearningData :: T.UTCTime -> LearningData
+mkLearningData today = LD {steps=1,
+              ef=2.5,
+              lastReviewed=today,
+              reviewDelay=T.nominalDay}
+--with this configuration, the next review will be one day from now.
+--May not be desirable.
 
 nextReview (LD _ _ last delay) = T.addUTCTime delay last
 --Some convenience functions for time.

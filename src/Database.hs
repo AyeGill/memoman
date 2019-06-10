@@ -3,6 +3,11 @@
 module Database (
     ID
     , Database
+    , mkDatabase
+    , Entry (E)
+    , readDatabase
+    , writeDatabase
+    , toReview
 ) where
 
 import qualified Data.ByteString as B
@@ -29,7 +34,7 @@ rightToMaybe = either (const Nothing) Just
 
 type ID = UUID
 
-data Entry = E ID FilePath S.LearningData deriving (Eq, Generic)
+data Entry = E ID FilePath S.LearningData deriving (Eq, Generic, Show)
 instance Serialize Entry
 -- Note that we violate the Ord laws, since compare disregards everything but the times,
 -- unlike (==). This should be fine, given the timing precision,
@@ -40,7 +45,7 @@ instance Ord Entry where
 
 -- *sorted* list of entries, by next review - early to late.
 -- We shouldn't export the constructor.
-data Database = D [Entry] deriving Generic
+data Database = D [Entry] deriving (Eq, Generic, Show)
 instance Serialize Database
 
 -- Constructor which sorts input
@@ -64,3 +69,6 @@ readDatabase :: FilePath -> IO (Maybe Database)
 readDatabase path = do
     bytes <- B.readFile path
     return $ rightToMaybe $ decode bytes
+
+writeDatabase :: Database -> FilePath -> IO ()
+writeDatabase base path = B.writeFile path $ encode base
