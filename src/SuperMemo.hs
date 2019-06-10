@@ -21,22 +21,20 @@ import qualified Data.Time.Clock as T (UTCTime
                                      , addUTCTime)
 import Data.Serialize
 import GHC.Generics
+import GHC.Exts
 import Data.Time.Clock.Serialize
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
-data LearningData = LD {steps :: Int, -- Times reviewed since last reset
-                        ef :: Float,  -- Easiness factor
-                        lastReviewed :: T.UTCTime,
-                        reviewDelay :: T.NominalDiffTime} deriving (Show, Eq, Generic)
+data LearningData = LD  {steps :: !Int, -- Times reviewed since last reset
+                         ef :: !Float,  -- Easiness factor
+                         lastReviewed :: !T.UTCTime,
+                         reviewDelay :: !T.NominalDiffTime} deriving (Show, Eq, Generic)
 instance Serialize LearningData
 
 mkLearningData :: T.UTCTime -> LearningData
-mkLearningData today = LD {steps=1,
-              ef=2.5,
-              lastReviewed=today,
-              reviewDelay=T.nominalDay}
+mkLearningData today = LD 1 2.5 today T.nominalDay
 --with this configuration, the next review will be one day from now.
 --May not be desirable.
 

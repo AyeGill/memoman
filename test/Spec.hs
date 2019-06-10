@@ -36,3 +36,7 @@ main = do
     today <- getCurrentTime
     putStrLn $ show $ toReview today d --should return those entries that are old enough.
     return ()
+
+
+--Todo: profile memory usage for million-card databases
+--Add tests for supermemo stuff.

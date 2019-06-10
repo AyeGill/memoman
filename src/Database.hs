@@ -31,10 +31,11 @@ rightToMaybe = either (const Nothing) Just
 -- Currently, requires reading and writing entire database each time.
 -- (Not cards themselves, just metadata)
 -- Even for databases with millions of cards, this should be <100KB, so fine.
+-- But think about memory overhead?
 
 type ID = UUID
 
-data Entry = E ID FilePath S.LearningData deriving (Eq, Generic, Show)
+data Entry = E !ID !FilePath !S.LearningData deriving (Eq, Generic, Show)
 instance Serialize Entry
 -- Note that we violate the Ord laws, since compare disregards everything but the times,
 -- unlike (==). This should be fine, given the timing precision,
@@ -64,6 +65,13 @@ modifyEntry (D base) entry@(E id _ _)=
     D $ L.insertBag entry $ filter isNotOld $ base
     where isNotOld (E id' _ _) = id /= id'
 
+modifyEntries :: Database -> [Entry] -> Database
+modifyEntries base entries = 
+    foldl modifyEntry base entries
+
+-- Utility fn. Does S.update on the learningdata part.
+review :: Entry -> Float -> T.UTCTime-> Entry
+review (E id path ld) q today = E id path $ S.update ld q today
 
 readDatabase :: FilePath -> IO (Maybe Database)
 readDatabase path = do
@@ -72,3 +80,4 @@ readDatabase path = do
 
 writeDatabase :: Database -> FilePath -> IO ()
 writeDatabase base path = B.writeFile path $ encode base
+
