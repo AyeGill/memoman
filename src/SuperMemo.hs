@@ -1,12 +1,26 @@
+{-# LANGUAGE OverloadedStrings
+           , DeriveGeneric
+           , DefaultSignatures
+           , StandaloneDeriving #-}
+
 module SuperMemo
     ( someFunc
     , newEF
     , update
     , LearningData (LD)
     , module T
+    , nextReview
     ) where
 
-import qualified Data.Time.Clock as T (UTCTime, NominalDiffTime, nominalDay, getCurrentTime, diffUTCTime)
+import qualified Data.Time.Clock as T (UTCTime
+                                     , NominalDiffTime
+                                     , nominalDay
+                                     , getCurrentTime
+                                     , diffUTCTime
+                                     , addUTCTime)
+import Data.Serialize
+import GHC.Generics
+import Data.Time.Clock.Serialize
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
@@ -14,8 +28,10 @@ someFunc = putStrLn "someFunc"
 data LearningData = LD {steps :: Int, -- Times reviewed since last reset
                         ef :: Float,  -- Easiness factor
                         lastReviewed :: T.UTCTime,
-                        reviewDelay :: T.NominalDiffTime} deriving Show
+                        reviewDelay :: T.NominalDiffTime} deriving (Show, Eq, Generic)
+instance Serialize LearningData
 
+nextReview (LD _ _ last delay) = T.addUTCTime delay last
 --Some convenience functions for time.
 
 
