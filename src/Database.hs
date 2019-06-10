@@ -8,6 +8,10 @@ module Database (
     , readDatabase
     , writeDatabase
     , toReview
+    , getPath
+    , getId
+    , modifyEntries
+    , insertEntries
 ) where
 
 import qualified Data.ByteString as B
@@ -43,6 +47,12 @@ instance Serialize Entry
 instance Ord Entry where
     compare (E _ _ ld) (E _ _ ld') = compare (S.nextReview ld) (S.nextReview ld') 
 
+getId :: Entry -> ID
+getId (E id _ _) = id
+
+getPath :: Entry -> FilePath
+getPath (E _ path _) = path
+
 
 -- *sorted* list of entries, by next review - early to late.
 -- We shouldn't export the constructor.
@@ -69,6 +79,11 @@ modifyEntries :: Database -> [Entry] -> Database
 modifyEntries base entries = 
     foldl modifyEntry base entries
 
+insertEntry :: Database -> Entry -> Database
+insertEntry (D base) entry = D $ L.insertBag entry base
+
+insertEntries :: Database -> [Entry] -> Database
+insertEntries = foldl insertEntry
 -- Utility fn. Does S.update on the learningdata part.
 review :: Entry -> Float -> T.UTCTime-> Entry
 review (E id path ld) q today = E id path $ S.update ld q today

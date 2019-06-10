@@ -39,9 +39,9 @@ mkLearningData today = LD 1 2.5 today T.nominalDay
 --May not be desirable.
 
 nextReview (LD _ _ last delay) = T.addUTCTime delay last
+
+
 --Some convenience functions for time.
-
-
 m :: Float -> T.NominalDiffTime -> T.NominalDiffTime
 m x t = (fromRational $ toRational x) * t
 

@@ -18,11 +18,15 @@ mkData = do
 
 buildDatabase :: IO Database
 buildDatabase = do
-    ids <- sequence $ replicate 4 $ nextRandom
-    let filePaths = ["foo/bar.tex", "foo/baz.tex", "quux/derp.html"]
+    ids <- sequence $ replicate 100 $ nextRandom
+    let filePaths = cycle ["foo/bar.tex"
+                   , "foo/baz.tex"
+                   , "quux/derp.html"
+                   , "foo/burp.png"]
     dats <- sequence $ replicate 4 $ mkData
     ydats <- sequence $ replicate 4 $ mkDataYesterday
-    let entries = zipWith3 E ids filepaths (dats ++ ydats)
+
+    let entries = zipWith3 E ids filePaths (dats ++ ydats)
     return $ mkDatabase entries
 
 main :: IO ()

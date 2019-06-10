@@ -27,6 +27,8 @@ dependencies:
 - data-ordlist >= 0.4
 - cereal >= 0.5.8
 - cereal-time >= 0.1
+- stringsearch >= 0.3.6
+- text >= 1.2.3
 library:
   source-dirs: src
 
