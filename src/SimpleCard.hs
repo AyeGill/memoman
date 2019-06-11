@@ -1,6 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module SimpleCard where
+module SimpleCard (
+    findText,
+    splitCard,
+    addCards
+) where
 
 import qualified Database as D
 import qualified Data.Text as T
@@ -37,7 +41,7 @@ addCards base path = do
     lines <- T.lines <$> (readFile path)
     (newLines, ids) <- helper lines
     writeFile path $ T.unlines newLines
-    entries <- sequence $ map (\id -> D.E id path <$> (S.mkLearningData <$> getCurrentTime)) ids
+    entries <- sequence $ map (\id -> D.mkEntry id path <$> (S.mkLearningData <$> getCurrentTime)) ids
     return $ D.insertEntries base entries
     where helper :: [T.Text] -> IO ([T.Text], [UUID])
           helper [] = return ([],[])

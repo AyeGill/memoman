@@ -4,7 +4,8 @@ module Database (
     ID
     , Database
     , mkDatabase
-    , Entry (E)
+    , Entry
+    , mkEntry -- Is this bad encapsulation
     , readDatabase
     , writeDatabase
     , toReview
@@ -12,7 +13,7 @@ module Database (
     , getId
     , modifyEntries
     , insertEntries
-    , review
+    , review --rename this?
 ) where
 
 import qualified Data.ByteString as B
@@ -41,6 +42,7 @@ rightToMaybe = either (const Nothing) Just
 type ID = UUID
 
 data Entry = E !ID !FilePath !S.LearningData deriving (Eq, Generic, Show)
+mkEntry = E
 instance Serialize Entry
 -- Note that we violate the Ord laws, since compare disregards everything but the times,
 -- unlike (==). This should be fine, given the timing precision,

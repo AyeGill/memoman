@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module CliViewer where
+module CliViewer (review) where
 
 import Data.Text as T
 import Data.Text.IO (putStrLn, getLine)
