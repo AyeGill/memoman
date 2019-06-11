@@ -19,10 +19,11 @@ import Data.Time.Clock
 -- Should be rewritten to be more robust, readable, ...
 findText :: D.Entry -> IO (Maybe T.Text)
 findText entry = go <$> (readFile $ D.getPath entry)
-    where go bytes = fmap (T.intercalate "\n" . tail)
+    where go bytes = fmap (T.unlines . tail)
                    $ find (checkId $ D.getId entry) 
-                   $ map (T.splitOn "\n") 
-                   $ T.splitOn "\n---\n" bytes
+                   $ map (T.lines) 
+                   $ map (T.strip)
+                   $ T.splitOn "\n---" bytes
           checkId id lines = (head lines) == T.intercalate "" ["ID:", (T.pack $ show id)]
 
 splitCard :: T.Text -> (T.Text, T.Text)
