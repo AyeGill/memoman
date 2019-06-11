@@ -12,6 +12,7 @@ module Database (
     , getId
     , modifyEntries
     , insertEntries
+    , review
 ) where
 
 import qualified Data.ByteString as B

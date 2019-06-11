@@ -13,5 +13,6 @@ The ideas in the section ["prospects: Extended Flashcards](https://www.gwern.net
 ## TODO:
 - Profiling of the database system for very large card collections.
 - Implement basic card formats/types. (somewhat done)
-- Implement CLI review.
+- Implement CLI review. (Done)
 - De-spaghettify, fix encapsulation of the various modules.
+- Writer proper robust parsing code.
