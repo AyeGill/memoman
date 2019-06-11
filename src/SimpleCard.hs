@@ -12,23 +12,44 @@ import Data.Text.IO (readFile, writeFile)
 import Prelude hiding (readFile, writeFile)
 import Data.List
 import Data.UUID.V4
-import Data.UUID
+import Data.UUID hiding (fromText)
 import SuperMemo as S
 import Data.Time.Clock
+import Shelly hiding (FilePath, find)
 -- Cards stored as raw text in simple files, no preprocessing.
 -- cards separated by "---", Q/A separated by newlines.
 -- Each card starts with ID:[UUID]
 
+
+findText :: D.Entry -> IO (Maybe T.Text)
+findText e = do
+    textM <- findRawText e
+    case textM of
+        Nothing -> return Nothing
+        Just x -> Just <$> runFile x
+
 -- Given a database entry, pick out the associated card.
 -- Should be rewritten to be more robust, readable, ...
-findText :: D.Entry -> IO (Maybe T.Text)
-findText entry = go <$> uncomment <$> (readFile $ D.getPath entry)
+findRawText :: D.Entry -> IO (Maybe T.Text)
+findRawText entry = go <$> uncomment <$> (readFile $ D.getPath entry)
     where go bytes = fmap (T.unlines . tail)
                    $ find (checkId $ D.getId entry) 
                    $ map (T.lines) 
                    $ map (T.strip)
                    $ T.splitOn "\n---" bytes
           checkId id lines = (head lines) == T.intercalate "" ["ID:", (T.pack $ show id)]
+
+
+runCommand :: T.Text -> T.Text -> IO T.Text -- add error handling?
+runCommand cmd input = shelly $ silently $ do
+    (return input) -|- (run (fromText cmd) [])
+
+runFile :: T.Text -> IO T.Text --If beginning with a shebang, run it.
+runFile t = case T.lines t of
+    [] -> return ""
+    hd:tl -> if (T.head hd)=='#'
+        then runCommand (T.tail hd) $ T.unlines tl
+        else return $ T.unlines $ hd:tl
 
 splitCard :: T.Text -> (T.Text, T.Text)
 splitCard x = (T.strip q, T.strip a)

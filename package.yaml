@@ -28,6 +28,7 @@ dependencies:
 - cereal >= 0.5.8
 - cereal-time >= 0.1
 - text >= 1.2.3
+- shelly >= 1.8
 library:
   source-dirs: src
 

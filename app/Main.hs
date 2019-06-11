@@ -14,8 +14,8 @@ dbName = ".memoman"
 infixr 2 </>
 
 run args = case args of
-    ["init"] -> run ["init", ""]
-    ["review"] -> run ["review", ""]
+    ["init"] -> run ["init", "."]
+    ["review"] -> run ["review", "."]
     ["add-cards", path] -> addCards path --assumes database is in cwd.
     ["init", path] -> D.writeDatabase (D.mkDatabase []) (path </> dbName)
     ["review", path] -> review (path </> dbName)
