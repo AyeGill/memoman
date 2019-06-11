@@ -22,7 +22,7 @@ import Data.Time.Clock
 -- Given a database entry, pick out the associated card.
 -- Should be rewritten to be more robust, readable, ...
 findText :: D.Entry -> IO (Maybe T.Text)
-findText entry = go <$> (readFile $ D.getPath entry)
+findText entry = go <$> uncomment <$> (readFile $ D.getPath entry)
     where go bytes = fmap (T.unlines . tail)
                    $ find (checkId $ D.getId entry) 
                    $ map (T.lines) 
@@ -53,3 +53,6 @@ addCards base path = do
                 id <- nextRandom
                 return ((T.append "ID:" $ T.pack $ show id):rest,id:ids)
           -- iterate over lines, adding ids where necessary and collecting ids in a list
+
+uncomment :: T.Text -> T.Text --removes comments.
+uncomment = T.unlines . filter ((/='%') . T.head) . T.lines
