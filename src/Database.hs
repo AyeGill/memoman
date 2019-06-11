@@ -71,7 +71,8 @@ toReview time (D base) = takeWhile mustReview base
     -- if next review is earlier than today.
 
 -- Delete entry(s) with the same id, and insert this one at the correct place.
-modifyEntry :: Database -> Entry -> Database
+modifyEntry :: Database -> Entry -> Database 
+
 modifyEntry (D base) entry@(E id _ _)=
     D $ L.insertBag entry $ filter isNotOld $ base
     where isNotOld (E id' _ _) = id /= id'
