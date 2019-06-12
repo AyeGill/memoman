@@ -5,6 +5,7 @@ module CliViewer (review) where
 import Data.Text as T
 import Data.Text.IO (putStrLn, getLine)
 import Prelude hiding (putStrLn, getLine)
+
 review :: T.Text -> T.Text -> IO Float
 review question answer = do
     putStrLn "Q:"

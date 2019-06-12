@@ -8,6 +8,7 @@ module SimpleCard (
 
 import qualified Database as D
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import Data.Text.IO (readFile, writeFile)
 import Prelude hiding (readFile, writeFile)
 import Data.List
@@ -15,7 +16,8 @@ import Data.UUID.V4
 import Data.UUID hiding (fromText)
 import SuperMemo as S
 import Data.Time.Clock
-import Shelly hiding (FilePath, find)
+import Shelly hiding (FilePath, find, trace)
+import Debug.Trace (trace)
 -- Cards stored as raw text in simple files, no preprocessing.
 -- cards separated by "---", Q/A separated by newlines.
 -- Each card starts with ID:[UUID]
@@ -31,13 +33,15 @@ findText e = do
 -- Given a database entry, pick out the associated card.
 -- Should be rewritten to be more robust, readable, ...
 findRawText :: D.Entry -> IO (Maybe T.Text)
-findRawText entry = go <$> uncomment <$> (readFile $ D.getPath entry)
+findRawText entry = do
+    contents <- readFile $ D.getPath entry
+    return $ go $ contents
     where go bytes = fmap (T.unlines . tail)
-                   $ find (checkId $ D.getId entry) 
-                   $ map (T.lines) 
-                   $ map (T.strip)
+                   $ find (checkId $ D.getId entry)
+                   $ map T.lines 
+                   $ map T.strip
                    $ T.splitOn "\n---" bytes
-          checkId id lines = (head lines) == T.intercalate "" ["ID:", (T.pack $ show id)]
+          checkId id lines = (head lines) == T.concat ["ID:", (T.pack $ show id)]
 
 
 runCommand :: T.Text -> T.Text -> IO T.Text -- add error handling?
@@ -76,6 +80,3 @@ addCards base path = do
                 id <- nextRandom
                 return ((T.append "ID:" $ T.pack $ show id):rest,id:ids)
           -- iterate over lines, adding ids where necessary and collecting ids in a list
-
-uncomment :: T.Text -> T.Text --removes comments.
-uncomment = T.unlines . filter ((/='%') . T.head) . T.lines

@@ -33,7 +33,7 @@ library:
   source-dirs: src
 
 executables:
-  memoman:
+  memoman-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

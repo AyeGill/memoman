@@ -34,9 +34,8 @@ data LearningData = LD  {steps :: !Int, -- Times reviewed since last reset
 instance Serialize LearningData
 
 mkLearningData :: T.UTCTime -> LearningData
-mkLearningData today = LD 1 2.5 today T.nominalDay
---with this configuration, the next review will be one day from now.
---May not be desirable.
+mkLearningData today = LD 0 2.5 today 0
+--at first, "review" immediately.
 
 nextReview (LD _ _ last delay) = T.addUTCTime delay last
 
@@ -67,9 +66,10 @@ newEF ef q = max 1.3 $ ef + delta
 update :: LearningData -> Float -> T.UTCTime -> LearningData
 update (LD steps ef last reviewDelay) q today = LD newSteps newEf today newDelay
     where fail = (q < 2)
-          newSteps = if fail then 1 else (steps+1)
+          newSteps = if fail then 0 else (steps+1)
           newEf = newEF ef q
           newDelay = case newSteps of 
+                                    0 -> 0
                                     1 -> T.nominalDay
                                     2 -> 6*T.nominalDay
                                     _ -> (m newEf reviewDelay)

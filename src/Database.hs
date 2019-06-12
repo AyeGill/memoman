@@ -36,7 +36,7 @@ rightToMaybe = either (const Nothing) Just
 
 -- Currently, requires reading and writing entire database each time.
 -- (Not cards themselves, just metadata)
--- Even for databases with millions of cards, this should be <100KB, so fine.
+-- Even for databases with a million cards, this should be megabytes of memory, so probably fine.
 -- But think about memory overhead?
 
 type ID = UUID
