@@ -16,15 +16,17 @@ module Database (
     , review --rename this?
 ) where
 
+import Prelude hiding (FilePath)
 import qualified Data.ByteString as B
 import qualified Data.UUID as UUID
 import Data.UUID (UUID)
 import qualified SuperMemo as S
 import qualified Data.List.Ordered as L
-import qualified Data.Time.Clock as T (UTCTime)
+import Data.Time.Clock (UTCTime)
 import Data.Serialize
 import GHC.Generics
-import SerialUUID
+import Serials
+import Shelly
 
 rightToMaybe = either (const Nothing) Just
 -- Pick out the right of an Either, return nothing if left.
@@ -67,7 +69,7 @@ mkDatabase :: [Entry] -> Database
 mkDatabase = D . L.sort
 
 -- Take those entries with dates earlier than today.
-toReview :: T.UTCTime -> Database -> [Entry]
+toReview :: UTCTime -> Database -> [Entry]
 toReview time (D base) = takeWhile mustReview base
     where mustReview (E _ _ ld) = S.nextReview ld < time
     -- if next review is earlier than today.
@@ -89,14 +91,14 @@ insertEntry (D base) entry = D $ L.insertBag entry base
 insertEntries :: Database -> [Entry] -> Database
 insertEntries = foldl insertEntry
 -- Utility fn. Does S.update on the learningdata part.
-review :: Entry -> Float -> T.UTCTime-> Entry
+review :: Entry -> Float -> UTCTime-> Entry
 review (E id path ld) q today = E id path $ S.update ld q today
 
-readDatabase :: FilePath -> IO (Maybe Database)
+readDatabase :: FilePath -> Sh (Maybe Database)
 readDatabase path = do
-    bytes <- B.readFile path
+    bytes <- readBinary path
     return $ rightToMaybe $ decode bytes
 
-writeDatabase :: Database -> FilePath -> IO ()
-writeDatabase base path = B.writeFile path $ encode base
+writeDatabase :: Database -> FilePath -> Sh ()
+writeDatabase base path = writeBinary path $ encode base
 

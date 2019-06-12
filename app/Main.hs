@@ -5,28 +5,29 @@ module Main (main) where
 import qualified CliViewer as C
 import qualified SimpleCard as S
 import qualified Database as D
+import Prelude hiding (FilePath)
 import System.Environment
 import Data.Time.Clock (getCurrentTime, UTCTime)
+import Shelly hiding (run)
+import Data.Text (Text, pack)
 
-dbName = ".memoman"
-
-(</>) a b = a ++ "/" ++ b 
-infixr 2 </>
+dbName = fromText ".memoman"
 
 main = do
     args <- getArgs
-    run args
+    shelly $ run (map pack args)
 
+run :: [Text] -> Sh ()
 run args = case args of
     ["init"] -> run ["init", "."]
     ["review"] -> run ["review", "."]
-    ["add-cards", path] -> addCards path --assumes database is in cwd.
-    ["init", path] -> D.writeDatabase (D.mkDatabase []) (path </> dbName)
-    ["review", path] -> review (path </> dbName)
-    ["dump-db"] -> D.readDatabase dbName >>= print --testing
-    _ -> putStrLn "Invalid arguments"
+    ["add-cards", path] -> addCards (fromText path) --assumes database is in cwd.
+    ["init", path] -> D.writeDatabase (D.mkDatabase []) (fromText path </> dbName)
+    ["review", path] -> review (fromText path </> dbName)
+    ["dump-db"] -> D.readDatabase dbName >>= (liftIO . print) --testing
+    _ -> echo "Invalid arguments"
 
-addCards :: FilePath -> IO ()
+addCards :: FilePath -> Sh ()
 addCards path = do
     dbm <- D.readDatabase dbName
     db <- case dbm of
@@ -35,16 +36,16 @@ addCards path = do
     newDb <- S.addCards db path
     D.writeDatabase newDb dbName
 
-maybeReviewEntry :: (D.Entry, Float) -> IO (D.Entry, Float) --Entry and q-value
+maybeReviewEntry :: (D.Entry, Float) -> Sh (D.Entry, Float) --Entry and q-value
 maybeReviewEntry (e, prevQ) = if prevQ < 4
     then do
-        today <- getCurrentTime
+        today <- liftIO getCurrentTime
         textm <- S.findText e
         case textm of
             Nothing -> do
-                putStrLn "Error: didn't find card for entry:"
-                print e
-                putStrLn "Skipping..."
+                echo "Error: didn't find card for entry:"
+                liftIO $ print e
+                echo "Skipping..."
                 return (e, 5) --return 5 so we don't keep trying this card.
             Just t -> do
                 let (q,a) = S.splitCard t
@@ -54,16 +55,16 @@ maybeReviewEntry (e, prevQ) = if prevQ < 4
 
 reviewEntry e = maybeReviewEntry (e,-1)
 
-runSession :: [D.Entry] -> IO [D.Entry] --Run a session with repetition
+runSession :: [D.Entry] -> Sh [D.Entry] --Run a session with repetition
 runSession entries = map fst <$> (go $ map (\e -> (e,-1)) entries)
-                where go :: [(D.Entry, Float)] -> IO [(D.Entry, Float)]
+                where go :: [(D.Entry, Float)] -> Sh [(D.Entry, Float)]
                       go esqs = if all (\(e,q) -> q>=4) esqs
                             then return esqs
                             else go =<< (sequence $ map maybeReviewEntry esqs)
 
 
 
-review :: FilePath -> IO ()
+review :: FilePath -> Sh ()
 review path = do
     --putStrLn "reviewing.."
     dbm <- D.readDatabase path
@@ -71,7 +72,7 @@ review path = do
             Nothing -> error "No databse found. Try running init."
             Just x -> return x
     --putStrLn "Found database. Continuing..."
-    today <- getCurrentTime
+    today <- liftIO getCurrentTime
     let entries = D.toReview today db
     --putStrLn "Found entries to review.."
     newEntries <- runSession entries

@@ -49,8 +49,8 @@ See `Main.hs` for all commands. Briefly:
 ## TODO
 
 - [ ] Profiling of the database system for very large card collections.
-- [ ] Implement basic card formats/types. (somewhat done)
-- [ ] Implement CLI review. (Done)
+- [x] Implement basic card formats/types. (somewhat done)
+- [x] Implement CLI review. (Done)
 - [ ] De-spaghettify, fix encapsulation of the various modules.
   - [ ] Move all logic to do with handling review into `SuperMemo.hs`.
   - [ ] Only `Database.hs` should care about the database representation.
