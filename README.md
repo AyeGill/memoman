@@ -6,7 +6,11 @@ For a very comprehensive discussion/introduction to spaced repetition, see
 [gwern: Spaced Repetition for Efficient Learning](https://www.gwern.net/Spaced-repetition).
 The ideas in the section ["prospects: Extended Flashcards](https://www.gwern.net/Spaced-repetition#prospects-extended-flashcards) are a large part of the motivation for this project.
 
+<<<<<<< HEAD
 ## The source
+=======
+## The source:
+>>>>>>> a2e54e79f598e55eb1b5596768c7054211f27549
 
 - SuperMemo.hs contains a simple implementation of the SM2 algorithm for spaced-repetition.
   - Note that a few aspects are slightly hacked.
@@ -27,6 +31,7 @@ Each card consists of:
 - A line containing only the characters "---".
 The last card may omit the "---".
 
+<<<<<<< HEAD
 Dynamic cards using shell scripts are also supported:
 A card starting with a shebang (e.g `#/bin/bash` or `#/usr/bin/python3`) will be interpreted by running the card as a script (piping the rest of the card as standard input to the specified command) and returning whatever this process prints to standard output, where question and answer should be separated by a blank line as usual.
 
@@ -47,11 +52,15 @@ See `Main.hs` for all commands. Briefly:
 - `memoman dump-db` to print out the whole database.
 
 ## TODO
+=======
+## TODO:
+>>>>>>> a2e54e79f598e55eb1b5596768c7054211f27549
 
 - Profiling of the database system for very large card collections.
 - Implement basic card formats/types. (somewhat done)
 - Implement CLI review. (Done)
 - De-spaghettify, fix encapsulation of the various modules.
+<<<<<<< HEAD
   - Move all logic to do with handling review into `SuperMemo.hs`.
   - Only `Database.hs` should care about the database representation.
   - Only `SimpleCard.hs` should care about card fetching logic
@@ -62,3 +71,9 @@ See `Main.hs` for all commands. Briefly:
 - Write proper tests.
   - Including a QuickCheck suite?
   - Refactor code to make it testable.
+=======
+- Writer proper robust parsing code.
+- Think about the initial delays - seem to be very different from Anki??
+- Dynamic cards with multiple ids?
+
+>>>>>>> a2e54e79f598e55eb1b5596768c7054211f27549
