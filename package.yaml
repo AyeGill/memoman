@@ -29,6 +29,7 @@ dependencies:
 - cereal-time >= 0.1
 - text >= 1.2.3
 - shelly >= 1.8
+
 library:
   source-dirs: src
 
@@ -44,7 +45,7 @@ executables:
     - memoman
 
 tests:
-  memoman-test:
+  supermemo-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -53,3 +54,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - memoman
+    - QuickCheck >= 2
+    - quickcheck-instances (>= 0.3 && < 0.3.21)

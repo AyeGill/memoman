@@ -11,8 +11,10 @@ module Database (
     , toReview
     , getPath
     , getId
+    , getLD
     , modifyEntries
     , insertEntries
+    , insertEntry
     , review --rename this?
 ) where
 
@@ -57,6 +59,9 @@ getId (E id _ _) = id
 
 getPath :: Entry -> FilePath
 getPath (E _ path _) = path
+
+getLD :: Entry -> S.LearningData
+getLD (E _ _ ld) = ld
 
 
 -- *sorted* list of entries, by next review - early to late.

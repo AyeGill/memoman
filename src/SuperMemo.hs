@@ -8,9 +8,12 @@ module SuperMemo
     , newEF
     , update
     , LearningData (LD)
+    , getEf
+    , getSteps
     , module T
     , nextReview
     , mkLearningData
+    , reviewUrgency
     ) where
 
 import qualified Data.Time.Clock as T (UTCTime
@@ -27,8 +30,8 @@ import Data.Time.Clock.Serialize
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
-data LearningData = LD  {steps :: !Int, -- Times reviewed since last reset
-                         ef :: !Float,  -- Easiness factor
+data LearningData = LD  {getSteps :: !Int, -- Times reviewed since last reset
+                         getEf :: !Float,  -- Easiness factor
                          lastReviewed :: !T.UTCTime,
                          reviewDelay :: !T.NominalDiffTime} deriving (Show, Eq, Generic)
 instance Serialize LearningData
@@ -37,6 +40,7 @@ mkLearningData :: T.UTCTime -> LearningData
 mkLearningData today = LD 0 2.5 today 0
 --at first, "review" immediately.
 
+nextReview :: LearningData -> T.UTCTime
 nextReview (LD _ _ last delay) = T.addUTCTime delay last
 
 
@@ -76,8 +80,8 @@ update (LD steps ef last reviewDelay) q today = LD newSteps newEf today newDelay
 
 
 reviewUrgency :: LearningData -> T.UTCTime -> Float
-reviewUrgency (LD _ _ last reviewDelay) today = 
-    fromRational $ toRational $ max 0 $ (T.diffUTCTime today last) - reviewDelay
+reviewUrgency ld today = 
+    fromRational $ toRational $ max 0 $ T.diffUTCTime today (nextReview ld)
     -- If time passed since last review > delay, just return 0.
     -- Else return difference (more = more urgent to review.)
     -- Return as float (seconds, I think) for convenience
