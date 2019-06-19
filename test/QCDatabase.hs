@@ -47,6 +47,9 @@ insertVsMkDb es = (inserted == mkDatabase es) && (inserted == inserted')
           inserted' = foldl insertEntry (mkDatabase []) es
 
 main = do
+    putStrLn "Testing: ReviewMustReview"
     quickCheck reviewsMustReview
+    putStrLn "Testing: readWriteTest"
     quickCheck readWriteTest
+    putStrLn "Testing: insert vs MkDb"
     quickCheck insertVsMkDb
