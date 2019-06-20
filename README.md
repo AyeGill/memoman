@@ -52,6 +52,8 @@ See `Main.hs` for all commands. Briefly:
 - [ ] Profiling of the database system for very large card collections.
 - [x] Implement basic card formats/types. (somewhat done)
 - [x] Implement CLI review. (Done)
+- [ ] Web/browser-based GUI review.
+- [ ] Adding cards from file which already has IDs.
 - [ ] De-spaghettify, fix encapsulation of the various modules.
   - [ ] Move all logic to do with handling review into `SuperMemo.hs`.
   - [ ] Only `Database.hs` should care about the database representation.
@@ -59,6 +61,7 @@ See `Main.hs` for all commands. Briefly:
   - [ ] Only `SimpleCard.hs` should care about card fetching logic
   - [ ] Move logic out of `Main.hs`
   - [x] `CliViewer.hs` should care about cli interaction.
+  - Currently, logic pertaining to the SuperMemo system in tangled up with the cli interaction, which is unacceptable.
 - [ ] Write proper robust parsing code.
   - [ ] Including for arguments.
 - [x] Use `Data.Text` and `Shelly` types everywhere.
@@ -66,3 +69,7 @@ See `Main.hs` for all commands. Briefly:
   - [x] Including a QuickCheck suite?
   - [ ] Refactor code to make it testable.
 - [ ] Think seriously about behaviour when reviewing out of turn.
+  - [ ] What happens when a card goes unreviewed for a long time?
+  - [ ] Make it possible to stop mid-review and still save alterations.
+  - [ ] Add option to review ahead.
+- [ ] Are we implementing the repetition-within-sessions stuff correct? Especially pertaining to behaviour of delay.
