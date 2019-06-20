@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Main (main) where
+module Memoman (dbName, addCards, review) where
 
 import qualified CliViewer as C
 import qualified SimpleCard as S
@@ -12,20 +12,6 @@ import Shelly hiding (run)
 import Data.Text (Text, pack)
 
 dbName = fromText ".memoman"
-
-main = do
-    args <- getArgs
-    shelly $ run (map pack args)
-
-run :: [Text] -> Sh ()
-run args = case args of
-    ["init"] -> run ["init", "."]
-    ["review"] -> run ["review", "."]
-    ["add-cards", path] -> addCards (fromText path) --assumes database is in cwd.
-    ["init", path] -> D.writeDatabase (D.mkDatabase []) (fromText path </> dbName)
-    ["review", path] -> review (fromText path </> dbName)
-    ["dump-db"] -> D.readDatabase dbName >>= (liftIO . print) --testing
-    _ -> echo "Invalid arguments"
 
 addCards :: FilePath -> Sh ()
 addCards path = do
@@ -61,8 +47,6 @@ runSession entries = map fst <$> (go $ map (\e -> (e,-1)) entries)
                       go esqs = if all (\(e,q) -> q>=4) esqs
                             then return esqs
                             else go =<< (sequence $ map maybeReviewEntry esqs)
-
-
 
 review :: FilePath -> Sh ()
 review path = do

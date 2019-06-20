@@ -68,7 +68,7 @@ addCards base path = do
     (newLines, ids) <- helper lines
     writefile path $ T.unlines newLines
     entries <- sequence 
-        $ map (\id -> D.mkEntry id path <$> (S.mkLearningData <$> (liftIO getCurrentTime)))
+        $ map (\id -> D.mkEntry id path <$> (S.newLearningData <$> (liftIO getCurrentTime))) --Unclear if this code should live in Database.hs
         $ ids
     return $ D.insertEntries base entries
     where helper :: [T.Text] -> Sh ([T.Text], [UUID])

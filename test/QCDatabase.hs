@@ -46,7 +46,12 @@ insertVsMkDb es = (inserted == mkDatabase es) && (inserted == inserted')
     where inserted = insertEntries (mkDatabase []) es
           inserted' = foldl insertEntry (mkDatabase []) es
 
+updateTiming :: Entry -> Float -> UTCTime -> Property
+updateTiming e q t = (t >= (nextReview (getLD e))) ==> (nextReview (getLD new) >= nextReview (getLD e)) 
+    where new = review e q t
+
 main = do
     quickCheck reviewsMustReview
     quickCheck readWriteTest
     quickCheck insertVsMkDb
+    quickCheck updateTiming

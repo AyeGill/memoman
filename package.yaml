@@ -34,9 +34,9 @@ library:
   source-dirs: src
 
 executables:
-  memoman:
+  memoman-cli:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         cli-app
     ghc-options:
     - -threaded
     - -rtsopts

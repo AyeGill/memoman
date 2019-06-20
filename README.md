@@ -38,6 +38,7 @@ This behaviour could be improved in two obvious ways:
 - Allow the user to "skip" a card when an error occurs, instead of having to enter junk data or exit the program.
 
 ## Usage
+
 See `Main.hs` for all commands. Briefly:
 
 - `memoman init` to create empty database in current directory.
@@ -54,11 +55,14 @@ See `Main.hs` for all commands. Briefly:
 - [ ] De-spaghettify, fix encapsulation of the various modules.
   - [ ] Move all logic to do with handling review into `SuperMemo.hs`.
   - [ ] Only `Database.hs` should care about the database representation.
+    - [ ] Figure out division of responsibilities between SuperMemo and Database.
   - [ ] Only `SimpleCard.hs` should care about card fetching logic
+  - [ ] Move logic out of `Main.hs`
   - [x] `CliViewer.hs` should care about cli interaction.
 - [ ] Write proper robust parsing code.
   - [ ] Including for arguments.
-- [ ] Use `Data.Text` and `Shelly` types everywhere.
+- [x] Use `Data.Text` and `Shelly` types everywhere.
 - [ ] Write proper tests.
-  - [ ] Including a QuickCheck suite?
+  - [x] Including a QuickCheck suite?
   - [ ] Refactor code to make it testable.
+- [ ] Think seriously about behaviour when reviewing out of turn.
