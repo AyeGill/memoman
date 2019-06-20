@@ -21,14 +21,15 @@ instance Arbitrary LearningData where
 
 
 -- If updating with q=0, steps goes to 0 and ef is unchanged
-testUpdateZero :: LearningData -> UTCTime -> Bool
+testUpdateZero :: LearningData -> UTCTime -> Property
 testUpdateZero ld t = case update ld 0 t of
-    (LD steps ef lr dt) -> steps==0 && ef==(getEf ld)
+    (LD steps ef lr dt) -> (steps===0) .&&. (ef===(getEf ld))
 
+    
 
--- Steps always increases by 1, unless q<3
-testUpdateSteps :: LearningData -> Float -> UTCTime -> Bool
-testUpdateSteps ld q t = (getSteps ld' == getSteps ld +1) || q<3
+-- Steps always increases by 1, assuming that q>=3
+testUpdateSteps :: LearningData -> Float -> UTCTime -> Property
+testUpdateSteps ld q t = q >= 3 ==> (getSteps ld' == getSteps ld +1)
     where ld' = update ld q t
 
 -- review urgency is zero if review is in the future
@@ -40,7 +41,11 @@ urgency ld today = reviewUrgency ld today >= 0
 
 
 main = do
+    putStrLn "Testing: Null updates"
     quickCheck testUpdateZero
+    putStrLn "Testing: Update steps"
     quickCheck testUpdateSteps
+    putStrLn "Testing: Urgency"
     quickCheck urgency
+    putStrLn "Testing: Urgency and next review."
     quickCheck urgencyAndNextReview

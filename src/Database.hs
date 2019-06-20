@@ -27,7 +27,7 @@ import qualified Data.List.Ordered as L
 import Data.Time.Clock (UTCTime)
 import Data.Serialize
 import GHC.Generics
-import Serials
+import Serials ()
 import Shelly
 
 rightToMaybe = either (const Nothing) Just
@@ -87,8 +87,7 @@ modifyEntry (D base) entry@(E id _ _)=
     where isNotOld (E id' _ _) = id /= id'
 
 modifyEntries :: Database -> [Entry] -> Database
-modifyEntries base entries = 
-    foldl modifyEntry base entries
+modifyEntries = foldl modifyEntry
 
 insertEntry :: Database -> Entry -> Database
 insertEntry (D base) entry = D $ L.insertBag entry base

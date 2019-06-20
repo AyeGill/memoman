@@ -51,7 +51,11 @@ updateTiming e q t = (t >= (nextReview (getLD e))) ==> (nextReview (getLD new) >
     where new = review e q t
 
 main = do
+    putStrLn "Testing: ReviewMustReview"
     quickCheck reviewsMustReview
+    putStrLn "Testing: readWriteTest"
     quickCheck readWriteTest
+    putStrLn "Testing: Insert vs mkDB"
     quickCheck insertVsMkDb
+    putStrLn "Testing: update timing"
     quickCheck updateTiming

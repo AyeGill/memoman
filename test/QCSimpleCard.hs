@@ -12,4 +12,6 @@ testSplit a b =
     (any (==T.empty) $ T.lines a) || 
     splitCard (T.unlines [T.strip a, "\n", T.strip b]) == (T.strip a, T.strip b)
 
-main = quickCheck testSplit
+main = do
+    putStrLn "Testing: Split"
+    quickCheck testSplit
