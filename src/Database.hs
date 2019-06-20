@@ -83,7 +83,7 @@ toReview time (D base) = takeWhile mustReview base
 modifyEntry :: Database -> Entry -> Database 
 
 modifyEntry (D base) entry@(E id _ _)=
-    D $ L.insertBag entry $ filter isNotOld $ base
+    D $ L.insertBag entry $ filter isNotOld base
     where isNotOld (E id' _ _) = id /= id'
 
 modifyEntries :: Database -> [Entry] -> Database

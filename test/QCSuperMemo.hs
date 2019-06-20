@@ -23,7 +23,7 @@ instance Arbitrary LearningData where
 -- If updating with q=0, steps goes to 0 and ef is unchanged
 testUpdateZero :: LearningData -> UTCTime -> Property
 testUpdateZero ld t = case update ld 0 t of
-    (LD steps ef lr dt) -> (steps===0) .&&. (ef===(getEf ld))
+    (LD steps ef lr dt) -> (steps===0) .&&. (ef===getEf ld)
 
     
 

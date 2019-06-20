@@ -33,25 +33,24 @@ findText e = do
 findRawText :: D.Entry -> Sh (Maybe T.Text)
 findRawText entry = do
     contents <- readfile $ D.getPath entry
-    return $ go $ contents
+    return $ go contents
     where go bytes = fmap (T.unlines . tail)
                    $ find (checkId $ D.getId entry)
-                   $ map T.lines 
-                   $ map T.strip
+                   $ map (T.lines . T.strip)
                    $ T.splitOn "\n---" bytes
-          checkId id lines = (head lines) == T.concat ["ID:", (T.pack $ show id)]
+          checkId id lines = head lines == T.concat ["ID:", T.pack $ show id]
 
 
 runCommand :: T.Text -> T.Text -> Sh (Maybe T.Text) -- add error handling?
 runCommand cmd input = 
     handleany_sh (\_ -> 
-        (trace $ T.concat ["ERROR OCURRED WHILE RUNNING COMMAND ", cmd]) >> return Nothing) 
+        trace ( T.concat ["ERROR OCURRED WHILE RUNNING COMMAND ", cmd]) >> return Nothing) 
     $ silently $ Just <$> return input -|- run (fromText cmd) []
 
 runFile :: T.Text -> Sh (Maybe T.Text) --If beginning with a shebang, run it.
 runFile t = case T.lines t of
     [] -> return $ Just ""
-    hd:tl -> if (T.head hd)=='#'
+    hd:tl -> if T.head hd=='#'
         then runCommand (T.tail hd) $ T.unlines tl
         else return $ Just $ T.unlines $ hd:tl
 
@@ -63,11 +62,11 @@ splitCard x = (T.strip q, T.strip a)
 --Find ID-less cards in the file, add them to the database with fresh SM data
 addCards :: D.Database -> FilePath -> Sh D.Database
 addCards base path = do
-    lines <- T.lines <$> (readfile path)
+    lines <- T.lines <$> readfile path
     (newLines, ids) <- helper lines
     writefile path $ T.unlines newLines
     entries <- mapM
-        (\id -> D.mkEntry id path <$> (S.newLearningData <$> (liftIO getCurrentTime))) --Unclear if this code should live in Database.hs
+        (\id -> D.mkEntry id path <$> (S.newLearningData <$> liftIO getCurrentTime)) --Unclear if this code should live in Database.hs
         ids
     return $ D.insertEntries base entries
     where helper :: [T.Text] -> Sh ([T.Text], [UUID])
@@ -78,5 +77,5 @@ addCards base path = do
             then return (x:rest, ids)
             else do
                 id <- liftIO nextRandom
-                return ((T.append "ID:" $ T.pack $ show id):rest,id:ids)
+                return (T.append "ID:" ( T.pack $ show id):rest,id:ids)
           -- iterate over lines, adding ids where necessary and collecting ids in a list

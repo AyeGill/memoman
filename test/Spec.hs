@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 import qualified QCSuperMemo as Sm (main)
 import qualified QCSimpleCard as Sc (main)
 import qualified QCDatabase as Db (main)
