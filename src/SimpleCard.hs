@@ -16,7 +16,6 @@ import Data.UUID hiding (fromText)
 import SuperMemo as S
 import Data.Time.Clock
 import Shelly hiding (find)
-import Debug.Trace (trace)
 -- Cards stored as raw text in simple files, no preprocessing.
 -- cards separated by "---", Q/A separated by newlines.
 -- Each card starts with ID:[UUID]
@@ -27,7 +26,7 @@ findText e = do
     textM <- findRawText e
     case textM of
         Nothing -> return Nothing
-        Just x -> Just <$> runFile x
+        Just x ->  runFile x
 
 -- Given a database entry, pick out the associated card.
 -- Should be rewritten to be more robust, readable, ...
@@ -43,18 +42,18 @@ findRawText entry = do
           checkId id lines = (head lines) == T.concat ["ID:", (T.pack $ show id)]
 
 
-runCommand :: T.Text -> T.Text -> Sh T.Text -- add error handling?
+runCommand :: T.Text -> T.Text -> Sh (Maybe T.Text) -- add error handling?
 runCommand cmd input = 
-    handleany_sh (\_ -> return $ T.concat ["ERROR OCURRED WHILE RUNNING COMMAND ", cmd]) 
-    $ silently $ do
-        (return input) -|- (run (fromText cmd) [])
+    handleany_sh (\_ -> 
+        (trace $ T.concat ["ERROR OCURRED WHILE RUNNING COMMAND ", cmd]) >> return Nothing) 
+    $ silently $ Just <$> return input -|- run (fromText cmd) []
 
-runFile :: T.Text -> Sh T.Text --If beginning with a shebang, run it.
+runFile :: T.Text -> Sh (Maybe T.Text) --If beginning with a shebang, run it.
 runFile t = case T.lines t of
-    [] -> return ""
+    [] -> return $ Just ""
     hd:tl -> if (T.head hd)=='#'
         then runCommand (T.tail hd) $ T.unlines tl
-        else return $ T.unlines $ hd:tl
+        else return $ Just $ T.unlines $ hd:tl
 
 splitCard :: T.Text -> (T.Text, T.Text)
 splitCard x = (T.strip q, T.strip a)
@@ -67,9 +66,7 @@ addCards base path = do
     lines <- T.lines <$> (readfile path)
     (newLines, ids) <- helper lines
     writefile path $ T.unlines newLines
-    entries <- sequence 
-        $ map (\id -> D.mkEntry id path <$> (S.mkLearningData <$> (liftIO getCurrentTime)))
-        $ ids
+    entries <- mapM (\id -> D.mkEntry id path <$> (S.mkLearningData <$> (liftIO getCurrentTime))) ids
     return $ D.insertEntries base entries
     where helper :: [T.Text] -> Sh ([T.Text], [UUID])
           helper [] = return ([],[])
