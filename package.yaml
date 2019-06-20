@@ -34,9 +34,19 @@ library:
   source-dirs: src
 
 executables:
-  memoman:
+  memoman-cli:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         cli-app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - memoman
+  
+  memoman-gui:
+    main:                Main.hs
+    source-dirs:         gui-app
     ghc-options:
     - -threaded
     - -rtsopts
@@ -45,7 +55,7 @@ executables:
     - memoman
 
 tests:
-  supermemo-test:
+  memoman-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:

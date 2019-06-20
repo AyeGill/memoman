@@ -12,8 +12,9 @@ module SuperMemo
     , getSteps
     , module T
     , nextReview
-    , mkLearningData
+    , newLearningData
     , reviewUrgency
+    , mkLearningData
     ) where
 
 import qualified Data.Time.Clock as T (UTCTime
@@ -36,8 +37,14 @@ data LearningData = LD  {getSteps :: !Int, -- Times reviewed since last reset
                          reviewDelay :: !T.NominalDiffTime} deriving (Show, Eq, Generic)
 instance Serialize LearningData
 
-mkLearningData :: T.UTCTime -> LearningData
-mkLearningData today = LD 0 2.5 today 0
+mkLearningData :: Int -> Float -> T.UTCTime -> T.NominalDiffTime -> LearningData
+mkLearningData steps ef lr rd = LD steps' ef' lr rd'
+    where steps' = max steps 0
+          ef' = max 1.3 ef
+          rd' = max 0 rd
+
+newLearningData :: T.UTCTime -> LearningData
+newLearningData today = LD 0 2.5 today 0
 --at first, "review" immediately.
 
 nextReview :: LearningData -> T.UTCTime
