@@ -9,7 +9,7 @@ import Data.Text as T hiding (any)
 
 testSplit :: T.Text -> T.Text -> Property
 testSplit a b =
-    not (elem T.empty ( T.lines a)) ==> 
+    T.empty `notElem` T.lines a ==> 
     splitCard (T.unlines [T.strip a, "\n", T.strip b]) == (T.strip a, T.strip b)
 
 main = do

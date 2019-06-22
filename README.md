@@ -73,3 +73,5 @@ See `Main.hs` for all commands. Briefly:
   - [ ] Make it possible to stop mid-review and still save alterations.
   - [ ] Add option to review ahead.
 - [ ] Are we implementing the repetition-within-sessions stuff correct? Especially pertaining to behaviour of delay.
+- [ ] Contemplate producing just one executable, with cli/gui behaviour controlled by flags. It is likely that we will want to run even the gui version from the command line.
+- [ ] 
