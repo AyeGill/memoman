@@ -52,7 +52,7 @@ See `Main.hs` for all commands. Briefly:
 - [ ] Profiling of the database system for very large card collections.
 - [x] Implement basic card formats/types. (somewhat done)
 - [x] Implement CLI review. (Done)
-- [ ] Web/browser-based GUI review.
+- [ ] Custom viewers.
 - [ ] Adding cards from file which already has IDs.
 - [ ] De-spaghettify, fix encapsulation of the various modules.
   - [ ] Move all logic to do with handling review into `SuperMemo.hs`.
@@ -74,4 +74,11 @@ See `Main.hs` for all commands. Briefly:
   - [ ] Add option to review ahead.
 - [ ] Are we implementing the repetition-within-sessions stuff correct? Especially pertaining to behaviour of delay.
 - [ ] Contemplate producing just one executable, with cli/gui behaviour controlled by flags. It is likely that we will want to run even the gui version from the command line.
-- [ ] 
+
+## Future workflow
+
+- Begin with files containing for each card:
+  - Optional id
+  - Code to generate/initialize card (to be run once)
+  - Code to view card (to be run on generated file on each review. Put "dynamics" here.
+- When add-cards run on this file, add ids if necessary, run card generating code.
