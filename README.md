@@ -66,7 +66,7 @@ See `Main.hs` for all commands. Briefly:
   - [ ] Including for arguments.
 - [x] Use `Data.Text` and `Shelly` types everywhere.
 - [ ] Write proper tests.
-  - [x] Including a QuickCheck suite?
+  - [x] In1cluding a QuickCheck suite?
   - [ ] Refactor code to make it testable.
 - [ ] Think seriously about behaviour when reviewing out of turn.
   - [ ] What happens when a card goes unreviewed for a long time?
@@ -82,3 +82,5 @@ See `Main.hs` for all commands. Briefly:
   - Code to generate/initialize card (to be run once)
   - Code to view card (to be run on generated file on each review. Put "dynamics" here.
 - When add-cards run on this file, add ids if necessary, run card generating code.
+- When reviewing, run the viewing code to view cards.
+- Have a config file with standard file-extension based viewers.
