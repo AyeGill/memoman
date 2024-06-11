@@ -41,8 +41,10 @@ findRawText entry = go <$> uncomment <$> (readFile $ D.getPath entry)
 
 
 runCommand :: T.Text -> T.Text -> IO T.Text -- add error handling?
-runCommand cmd input = shelly $ silently $ do
-    (return input) -|- (run (fromText cmd) [])
+runCommand cmd input = shelly 
+    $ handleany_sh (\_ -> return $ T.concat ["ERROR OCURRED WHILE RUNNING COMMAND ", cmd]) 
+    $ silently $ do
+        (return input) -|- (run (fromText cmd) [])
 
 runFile :: T.Text -> IO T.Text --If beginning with a shebang, run it.
 runFile t = case T.lines t of
